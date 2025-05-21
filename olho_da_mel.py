@@ -32,86 +32,78 @@ def create_color_visualization(target_rgb: Tuple[int, int, int], similar_colors:
         output_file: Path to save the image (optional)
         img_bytes: BytesIO object to save the image to (optional)
     """
-    # Image dimensions and layout
-    width = 1000
-    color_block_width = 800
-    color_height = 120
-    text_height = 30
-    padding = 40
-    spacing = 60
+    # Proporções responsivas baseadas em porcentagem
+    base_width = 600
+    min_height = 80
     
-    # Calculate total height needed
-    section_height = color_height + text_height + spacing
-    total_sections = len(similar_colors) + 1  # +1 for target color
-    height = (section_height * total_sections) + padding * 2
+    # Calcula altura total baseada no número de cores
+    total_colors = len(similar_colors) + 1
+    total_height = min_height * total_colors
     
-    # Create image with white background
-    img = Image.new('RGB', (width, height), (245, 245, 245))  # Slight off-white for better contrast
+    # Padding e espaçamento como porcentagem da altura
+    padding_vertical = int(min_height * 0.2)  # 20% da altura mínima
+    total_height += padding_vertical * (total_colors + 1)
+    
+    # Criar imagem com fundo branco
+    img = Image.new('RGB', (base_width, total_height), 'white')
     draw = ImageDraw.Draw(img)
     
     try:
-        # Try to load a font (fallback to default if not available)
-        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 20)
+        # Tenta carregar a fonte, com fallback para a fonte padrão
+        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 16)
     except:
         font = ImageFont.load_default()
     
-    # Calculate left margin to center color blocks
-    left_margin = (width - color_block_width) // 2
+    # Desenha a cor original
+    current_y = padding_vertical
     
-    # Draw target color
-    y = padding
-    # Draw color block
+    # Desenha o retângulo da cor
     draw.rectangle(
-        [left_margin, y, left_margin + color_block_width, y + color_height],
-        fill=target_rgb,
-        outline=(200, 200, 200),  # Subtle border
-        width=2
+        [0, current_y, base_width, current_y + min_height],
+        fill=target_rgb
     )
     
-    # Center and draw text
+    # Texto da cor original
     text = f"Cor Original RGB{target_rgb}"
     text_bbox = draw.textbbox((0, 0), text, font=font)
     text_width = text_bbox[2] - text_bbox[0]
-    text_x = (width - text_width) // 2
-    draw.text((text_x, y + color_height + 10), text, fill=(50, 50, 50), font=font)
+    text_x = (base_width - text_width) // 2
+    draw.text(
+        (text_x, current_y + min_height + padding_vertical//2),
+        text,
+        fill='black',
+        font=font
+    )
     
-    # Draw similar colors
-    for i, color in enumerate(similar_colors):
-        y = padding + (i + 1) * section_height
+    # Desenha as cores similares
+    for color in similar_colors:
+        current_y += min_height + padding_vertical * 2
         color_rgb = parse_rgb(color['rgb'])
         
-        # Draw color block
+        # Desenha o retângulo da cor
         draw.rectangle(
-            [left_margin, y, left_margin + color_block_width, y + color_height],
-            fill=color_rgb,
-            outline=(200, 200, 200),  # Subtle border
-            width=2
+            [0, current_y, base_width, current_y + min_height],
+            fill=color_rgb
         )
         
-        # Prepare text lines
-        text1 = f"{color['name']} - {color['code']}"
-        text2 = f"RGB{color['rgb']} - Distância: {color['distance']:.2f}"
+        # Texto com informações da cor
+        text = f"{color['name']} - {color['code']}"
+        text_bbox = draw.textbbox((0, 0), text, font=font)
+        text_width = text_bbox[2] - text_bbox[0]
+        text_x = (base_width - text_width) // 2
         
-        # Center and draw first line
-        text1_bbox = draw.textbbox((0, 0), text1, font=font)
-        text1_width = text1_bbox[2] - text1_bbox[0]
-        text1_x = (width - text1_width) // 2
-        draw.text((text1_x, y + color_height + 10), text1, fill=(50, 50, 50), font=font)
+        draw.text(
+            (text_x, current_y + min_height + padding_vertical//2),
+            text,
+            fill='black',
+            font=font
+        )
     
-    # Add subtle background grid (optional)
-    grid_spacing = 20
-    grid_color = (240, 240, 240)
-    for x in range(0, width, grid_spacing):
-        draw.line([(x, 0), (x, height)], fill=grid_color)
-    for y in range(0, height, grid_spacing):
-        draw.line([(0, y), (width, y)], fill=grid_color)
-    
-    # Save with high quality settings
+    # Salva a imagem
     save_params = {
         'format': 'PNG',
         'quality': 95,
-        'dpi': (300, 300),
-        'optimize': True
+        'dpi': (300, 300)
     }
     
     if output_file:
