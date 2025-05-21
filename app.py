@@ -126,8 +126,9 @@ if st.button("Buscar Cores Similares", type="primary"):
         # Mostrar primeira cor similar
         with cols[1]:
             color = similar_colors[0]
+            rgb_values = parse_rgb(color["rgb"])
             st.markdown(f"""
-            <div class='color-block' style='background-color: {color["rgb"]}'></div>
+            <div class='color-block' style='background-color: rgb{rgb_values}'></div>
             <div class='color-info'>
                 <strong>{color["name"]} ({color["code"]})</strong>
                 <div class='color-metrics'>
@@ -144,8 +145,9 @@ if st.button("Buscar Cores Similares", type="primary"):
             # Cor da esquerda
             with col1:
                 color = similar_colors[i]
+                rgb_values = parse_rgb(color["rgb"])
                 st.markdown(f"""
-                <div class='color-block' style='background-color: {color["rgb"]}'></div>
+                <div class='color-block' style='background-color: rgb{rgb_values}'></div>
                 <div class='color-info'>
                     <strong>{color["name"]} ({color["code"]})</strong>
                     <div class='color-metrics'>
@@ -159,8 +161,9 @@ if st.button("Buscar Cores Similares", type="primary"):
             if i + 1 < len(similar_colors):
                 with col2:
                     color = similar_colors[i + 1]
+                    rgb_values = parse_rgb(color["rgb"])
                     st.markdown(f"""
-                    <div class='color-block' style='background-color: {color["rgb"]}'></div>
+                    <div class='color-block' style='background-color: rgb{rgb_values}'></div>
                     <div class='color-info'>
                         <strong>{color["name"]} ({color["code"]})</strong>
                         <div class='color-metrics'>
