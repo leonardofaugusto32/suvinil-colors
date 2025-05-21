@@ -1,0 +1,2 @@
+2025-05-21 13:41:07,084 - ERROR - Failed to initialize Safari WebDriver: Message: Could not create a session: You must enable 'Allow remote automation' in the Developer section of Safari Settings to control Safari via WebDriver.
+
