@@ -106,12 +106,18 @@ def find_similar_colors(target_rgb: Tuple[int, int, int], colors_data: dict, num
     """
     Find the most similar colors to the target RGB color.
     Returns 5 colors by default to fit in the 2x3 grid layout with the original color.
+    Ensures no duplicate colors are returned.
     """
     color_distances = []
+    seen_codes = set()  # Track seen color codes
     
     # Process each hue and its colors
     for hue_data in colors_data['items']:
         for color in hue_data['colors']:
+            # Skip if we've already seen this color code
+            if color['code'] in seen_codes:
+                continue
+                
             # Parse the RGB string from Suvinil's format
             color_rgb = parse_rgb(color['rgb'])
             
@@ -126,6 +132,7 @@ def find_similar_colors(target_rgb: Tuple[int, int, int], colors_data: dict, num
                 'distance': distance
             }
             color_distances.append(color_info)
+            seen_codes.add(color['code'])
     
     # Sort by distance and get top N results
     return sorted(color_distances, key=lambda x: x['distance'])[:num_results]
