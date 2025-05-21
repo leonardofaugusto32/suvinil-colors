@@ -1,5 +1,9 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = [
+    "setuptools>=61.0",
+    "wheel",
+    "pillow>=9.5.0"
+]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,7 +13,7 @@ description = "Encontrador de cores similares Suvinil"
 requires-python = "==3.10.*"
 dependencies = [
     "streamlit==1.32.2",
-    "pillow>=10.2.0",
+    "pillow>=9.5.0",
     "requests==2.31.0",
     "beautifulsoup4==4.12.3",
     "pandas==2.2.0",
@@ -20,4 +24,7 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["."] 
+packages = ["."]
+
+[tool.setuptools.package-data]
+"*" = ["*.json", "*.png", "*.jpg"] 
