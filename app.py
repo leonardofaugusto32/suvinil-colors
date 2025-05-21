@@ -5,7 +5,7 @@ import json
 
 # Configuração da página
 st.set_page_config(
-    page_title="👁️ OLHO DA MEL - Cores Similares Suvinil",
+    page_title="OLHO MÍOPE DA MEL - Cores Similares Suvinil",
     page_icon="👁️",
     layout="wide"
 )
@@ -57,8 +57,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Título e descrição
-st.title("👁️ OLHO DA MEL - Encontrar Cores Similares Suvinil")
-st.write("Digite os valores RGB para encontrar cores similares na paleta Suvinil")
+st.title("OLHO MÍOPE DA MEL - Encontrar Cores Similares Suvinil")
+st.write("Cansado de ser mais indeciso que o Phil na hora de escolher cores de parede? Utilize o OLHO MÍOPE DA MEL e evite deixar sua casa mais assombrosa que a criaça do cemitério.")
 
 # Adicionar instruções
 st.markdown("""
@@ -182,7 +182,7 @@ if st.button("Buscar Cores Similares", type="primary"):
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #666; padding: 20px;'>
-    <p>Desenvolvido com ❤️ para ajudar na escolha de cores Suvinil</p>
+    <p>Desenvolvido com ❤️ e um pouquinho de sacanagem para ajudar na escolha de cores Suvinil</p>
     <p style='font-size: 0.9em;'>
         Este é um projeto independente e não tem vínculo oficial com a Suvinil.<br>
         As cores são apenas referência e podem variar dependendo do dispositivo e condições de visualização.
