@@ -33,13 +33,14 @@ def create_color_visualization(target_rgb: Tuple[int, int, int], similar_colors:
         img_bytes: BytesIO object to save the image to (optional)
     """
     # Image dimensions and layout
-    width = 600  # Reduced width for better display
-    padding = 20
-    color_height = 80  # Increased height for better visibility
-    text_height = 40  # Increased text height
+    width = 800
+    padding = 30
+    color_height = 100  # Altura da barra de cor
+    text_height = 50    # Altura para o texto
+    spacing = 40        # Espaço entre seções
     
     # Calculate total height needed
-    section_height = color_height + text_height + padding  # height for each color section
+    section_height = color_height + text_height + spacing
     total_sections = len(similar_colors) + 1  # +1 for target color
     height = (section_height * total_sections) + padding * 2
     
@@ -49,32 +50,53 @@ def create_color_visualization(target_rgb: Tuple[int, int, int], similar_colors:
     
     try:
         # Try to load a font (fallback to default if not available)
-        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 16)  # Increased font size
+        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 18)
     except:
         font = ImageFont.load_default()
     
     # Draw target color
     y = padding
+    # Desenha a barra de cor com bordas arredondadas simuladas
     draw.rectangle([padding, y, width-padding, y+color_height], fill=target_rgb)
-    draw.text((padding, y+color_height+5), f"Cor Original RGB{target_rgb}", fill='black', font=font)
+    # Adiciona uma borda sutil
+    draw.rectangle([padding, y, width-padding, y+color_height], outline='gray', width=1)
+    
+    # Texto centralizado
+    text = f"Cor Original RGB{target_rgb}"
+    text_bbox = draw.textbbox((0, 0), text, font=font)
+    text_width = text_bbox[2] - text_bbox[0]
+    text_x = (width - text_width) // 2
+    draw.text((text_x, y+color_height+10), text, fill='black', font=font)
     
     # Draw similar colors
     for i, color in enumerate(similar_colors):
         y = padding + (i + 1) * section_height
         color_rgb = parse_rgb(color['rgb'])
         
-        # Draw color rectangle
+        # Desenha a barra de cor com bordas arredondadas simuladas
         draw.rectangle([padding, y, width-padding, y+color_height], fill=color_rgb)
+        # Adiciona uma borda sutil
+        draw.rectangle([padding, y, width-padding, y+color_height], outline='gray', width=1)
         
-        # Draw color information
-        text = f"{color['name']} - {color['code']} - RGB{color['rgb']}"
-        draw.text((padding, y+color_height+5), text, fill='black', font=font)
-        text2 = f"Distância: {color['distance']:.2f}"
-        draw.text((padding, y+color_height+25), text2, fill='black', font=font)  # Additional line for distance
+        # Informações da cor em duas linhas centralizadas
+        text1 = f"{color['name']} - {color['code']}"
+        text2 = f"RGB{color['rgb']} - Distância: {color['distance']:.2f}"
+        
+        # Centraliza o texto 1
+        text1_bbox = draw.textbbox((0, 0), text1, font=font)
+        text1_width = text1_bbox[2] - text1_bbox[0]
+        text1_x = (width - text1_width) // 2
+        draw.text((text1_x, y+color_height+5), text1, fill='black', font=font)
+        
+        # Centraliza o texto 2
+        text2_bbox = draw.textbbox((0, 0), text2, font=font)
+        text2_width = text2_bbox[2] - text2_bbox[0]
+        text2_x = (width - text2_width) // 2
+        draw.text((text2_x, y+color_height+30), text2, fill='black', font=font)
     
     # Save the image
     if output_file:
-        img.save(output_file)
+        img.save(output_file, quality=95, dpi=(300, 300))  # Aumenta a qualidade e DPI
         print(f"\nVisualização salva em: {output_file}")
         
         # Try to open the image automatically
@@ -85,7 +107,7 @@ def create_color_visualization(target_rgb: Tuple[int, int, int], similar_colors:
     
     # Save to BytesIO if provided
     if img_bytes is not None:
-        img.save(img_bytes, format='PNG')
+        img.save(img_bytes, format='PNG', quality=95, dpi=(300, 300))  # Aumenta a qualidade e DPI
 
 def find_similar_colors(target_rgb: Tuple[int, int, int], colors_data: dict, num_results: int = 5) -> List[dict]:
     """
