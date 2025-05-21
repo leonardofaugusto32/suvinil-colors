@@ -24,7 +24,7 @@ def calculate_color_distance(color1: Tuple[int, int, int], color2: Tuple[int, in
 
 def create_color_visualization(target_rgb: Tuple[int, int, int], similar_colors: List[dict], output_file: str = 'color_comparison.png', img_bytes: io.BytesIO = None):
     """
-    Create a visual comparison of the target color and similar colors.
+    Create a visual comparison of the target color and similar colors in a 2x3 grid.
     
     Args:
         target_rgb: The target RGB color
@@ -32,72 +32,57 @@ def create_color_visualization(target_rgb: Tuple[int, int, int], similar_colors:
         output_file: Path to save the image (optional)
         img_bytes: BytesIO object to save the image to (optional)
     """
-    # Proporções responsivas baseadas em porcentagem
-    base_width = 600
-    min_height = 80
+    # Dimensões base
+    color_width = 250
+    color_height = 100
+    padding = 10
+    text_height = 20
     
-    # Calcula altura total baseada no número de cores
-    total_colors = len(similar_colors) + 1
-    total_height = min_height * total_colors
+    # Grid 2x3
+    cols = 2
+    rows = 3
     
-    # Padding e espaçamento como porcentagem da altura
-    padding_vertical = int(min_height * 0.2)  # 20% da altura mínima
-    total_height += padding_vertical * (total_colors + 1)
+    # Calcula dimensões totais
+    width = (color_width * cols) + (padding * (cols + 1))
+    height = (color_height + text_height) * rows + (padding * (rows + 1))
     
     # Criar imagem com fundo branco
-    img = Image.new('RGB', (base_width, total_height), 'white')
+    img = Image.new('RGB', (width, height), 'white')
     draw = ImageDraw.Draw(img)
     
     try:
-        # Tenta carregar a fonte, com fallback para a fonte padrão
-        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 16)
+        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 14)
     except:
         font = ImageFont.load_default()
+
+    # Lista com a cor original e as cores similares
+    all_colors = [{'name': 'Cor Original', 'code': '', 'rgb': str(target_rgb), 'distance': 0}] + similar_colors[:5]
     
-    # Desenha a cor original
-    current_y = padding_vertical
-    
-    # Desenha o retângulo da cor
-    draw.rectangle(
-        [0, current_y, base_width, current_y + min_height],
-        fill=target_rgb
-    )
-    
-    # Texto da cor original
-    text = f"Cor Original RGB{target_rgb}"
-    text_bbox = draw.textbbox((0, 0), text, font=font)
-    text_width = text_bbox[2] - text_bbox[0]
-    text_x = (base_width - text_width) // 2
-    draw.text(
-        (text_x, current_y + min_height + padding_vertical//2),
-        text,
-        fill='black',
-        font=font
-    )
-    
-    # Desenha as cores similares
-    for color in similar_colors:
-        current_y += min_height + padding_vertical * 2
-        color_rgb = parse_rgb(color['rgb'])
+    # Desenha as cores em grid
+    for i, color in enumerate(all_colors):
+        # Calcula posição no grid
+        row = i // cols
+        col = i % cols
         
-        # Desenha o retângulo da cor
-        draw.rectangle(
-            [0, current_y, base_width, current_y + min_height],
-            fill=color_rgb
-        )
+        # Calcula coordenadas
+        x = padding + (col * (color_width + padding))
+        y = padding + (row * (color_height + text_height + padding))
         
-        # Texto com informações da cor
-        text = f"{color['name']} - {color['code']}"
+        # Desenha retângulo da cor
+        color_rgb = target_rgb if i == 0 else parse_rgb(color['rgb'])
+        draw.rectangle([x, y, x + color_width, y + color_height], fill=color_rgb)
+        
+        # Prepara o texto
+        if i == 0:
+            text = "Cor Original"
+        else:
+            text = f"{color['name']} ({color['code']})"
+        
+        # Centraliza e desenha o texto
         text_bbox = draw.textbbox((0, 0), text, font=font)
         text_width = text_bbox[2] - text_bbox[0]
-        text_x = (base_width - text_width) // 2
-        
-        draw.text(
-            (text_x, current_y + min_height + padding_vertical//2),
-            text,
-            fill='black',
-            font=font
-        )
+        text_x = x + (color_width - text_width) // 2
+        draw.text((text_x, y + color_height + 5), text, fill='black', font=font)
     
     # Salva a imagem
     save_params = {
@@ -120,6 +105,7 @@ def create_color_visualization(target_rgb: Tuple[int, int, int], similar_colors:
 def find_similar_colors(target_rgb: Tuple[int, int, int], colors_data: dict, num_results: int = 5) -> List[dict]:
     """
     Find the most similar colors to the target RGB color.
+    Returns 5 colors by default to fit in the 2x3 grid layout with the original color.
     """
     color_distances = []
     
