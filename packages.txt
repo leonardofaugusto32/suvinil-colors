@@ -11,4 +11,8 @@ tk8.6-dev
 python3-tk
 libharfbuzz-dev
 libfribidi-dev
-libxcb1-dev 
+libxcb1-dev
+libglib2.0-0
+libsm6
+libxrender1
+libxext6 
