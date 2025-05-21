@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "olho-da-mel"
 version = "1.0.0"
 description = "Encontrador de cores similares Suvinil"
-requires-python = ">=3.9"
+requires-python = ">=3.10,<3.11"
 
 [tool.setuptools]
 packages = ["."] 
