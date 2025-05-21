@@ -33,10 +33,10 @@ def create_color_visualization(target_rgb: Tuple[int, int, int], similar_colors:
         img_bytes: BytesIO object to save the image to (optional)
     """
     # Dimensões base
-    color_width = 250
-    color_height = 100
-    padding = 10
-    text_height = 20
+    color_width = 300
+    color_height = 60  # Altura reduzida para melhor proporção
+    padding = 15
+    text_height = 25
     
     # Grid 2x3
     cols = 2

@@ -42,8 +42,11 @@ if st.button("Buscar Cores Similares"):
         # Mostrar resultados
         st.subheader("Cores mais próximas encontradas:")
         
-        # Mostrar a imagem
-        st.image(img_bytes, caption="Comparação de Cores", use_container_width=True)
+        # Centralizar a imagem usando colunas
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            # Mostrar a imagem com largura fixa
+            st.image(img_bytes, use_container_width=False)
         
         # Mostrar detalhes em uma tabela
         results = []
