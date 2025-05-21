@@ -33,10 +33,10 @@ def create_color_visualization(target_rgb: Tuple[int, int, int], similar_colors:
         img_bytes: BytesIO object to save the image to (optional)
     """
     # Image dimensions and layout
-    width = 800
+    width = 600  # Reduced width for better display
     padding = 20
-    color_height = 60
-    text_height = 30
+    color_height = 80  # Increased height for better visibility
+    text_height = 40  # Increased text height
     
     # Calculate total height needed
     section_height = color_height + text_height + padding  # height for each color section
@@ -49,7 +49,7 @@ def create_color_visualization(target_rgb: Tuple[int, int, int], similar_colors:
     
     try:
         # Try to load a font (fallback to default if not available)
-        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 14)
+        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 16)  # Increased font size
     except:
         font = ImageFont.load_default()
     
@@ -67,8 +67,10 @@ def create_color_visualization(target_rgb: Tuple[int, int, int], similar_colors:
         draw.rectangle([padding, y, width-padding, y+color_height], fill=color_rgb)
         
         # Draw color information
-        text = f"{color['name']} - {color['code']} - RGB{color['rgb']} - Distância: {color['distance']:.2f}"
+        text = f"{color['name']} - {color['code']} - RGB{color['rgb']}"
         draw.text((padding, y+color_height+5), text, fill='black', font=font)
+        text2 = f"Distância: {color['distance']:.2f}"
+        draw.text((padding, y+color_height+25), text2, fill='black', font=font)  # Additional line for distance
     
     # Save the image
     if output_file:
